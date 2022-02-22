@@ -71,7 +71,8 @@ async def match(ctx):
             await message.channel.send(f"<@{match[0]}> & <@{match[1]}>")
             continue
         await message.channel.send(f"<@{match[0]}> is left out :(")
-    await message.channel.send("Message your match to continue the conversation.")
+    emoji = "😀"
+    await message.channel.send("Message your match to get to know them better {}".format(emoji))
     
 bot.run(TOKEN)
 
