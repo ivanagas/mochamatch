@@ -8,8 +8,6 @@ from discord.ext import commands
 from discord.utils import find
 from discord.ext.commands import has_permissions
 
-# join links
-# https://discord.com/api/oauth2/authorize?client_id=829578421893070849&permissions=68672&scope=bot
 
 load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')
