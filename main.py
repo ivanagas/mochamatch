@@ -7,7 +7,6 @@ from dotenv import load_dotenv
 from discord.ext import commands
 from discord.utils import find
 from discord.ext.commands import has_permissions
-from discord.ext import commands
 
 
 load_dotenv()
