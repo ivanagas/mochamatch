@@ -8,7 +8,6 @@ from discord.ext import commands
 from discord.utils import find
 from discord.ext.commands import has_permissions
 
-# https://tutorial.vcokltfre.dev/tutorial/05-cogs/
 
 load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')
