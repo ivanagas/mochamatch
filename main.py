@@ -8,6 +8,7 @@ from discord.ext import commands
 from discord.utils import find
 from discord.ext.commands import has_permissions
 
+# https://tutorial.vcokltfre.dev/tutorial/05-cogs/
 
 load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')
@@ -93,6 +94,17 @@ async def match(ctx, match_size=2):
         return
     await message.channel.send("Message your matches to get to know them better {}".format(emoji))
 
+@bot.command(name='feedback', help='Provide feedback on Mocha Match')
+@has_permissions(use_slash_commands=True)
+async def feedback(ctx):
+    feedback = ctx.message.clean_content[12:]
+    if feedback:
+        feedback += '\n'
+        with open('feedback.txt', 'a') as f:
+            f.write(feedback)
+            f.close()
+        await ctx.send('Your feedback has been received. Thanks!', delete_after=10)
+        
 
 bot.run(TOKEN)
 
