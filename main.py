@@ -54,7 +54,6 @@ async def start(ctx):
 
     logger.info(f"guild:{ctx.guild.id} - user:{ctx.author.id} - cmd:start")
     
-
 @bot.command(name='match', help='Runs matching and sends messages with pairs')
 @has_permissions(use_slash_commands=True)
 async def match(ctx, match_size=2):
@@ -73,8 +72,8 @@ async def match(ctx, match_size=2):
     match_list = []
     for reaction in last_message.reactions:
         async for user in reaction.users():
-            # if user.id != bot.user.id and user.id not in match_list:
-            match_list.append(user.id)
+            if user.id != bot.user.id and user.id not in match_list:
+                match_list.append(user.id)
     
     logger.info(f"guild:{ctx.guild.id} - user:{ctx.author.id} - cmd:match - matchsize:{match_size} - matched:{len(match_list)}")
     
@@ -109,7 +108,6 @@ async def match(ctx, match_size=2):
         await message.channel.send("Message your match to get to know them better {}".format(emoji))
         return
     await message.channel.send("Message your matches to get to know them better {}".format(emoji))
-
 
 @bot.command(name='feedback', help='Provide feedback on Mocha Match')
 @has_permissions(use_slash_commands=True)
