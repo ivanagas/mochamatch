@@ -1,5 +1,6 @@
 import os
 import random
+import logging
 
 import discord
 from dotenv import load_dotenv
@@ -19,8 +20,17 @@ help_command = commands.DefaultHelpCommand(
 
 bot = commands.Bot(command_prefix='/m ', help_command = help_command)
 
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
+handler = logging.FileHandler('app.log')
+handler.setLevel(logging.DEBUG)
+format = logging.Formatter('%(asctime)s - %(message)s')
+handler.setFormatter(format)
+logger.addHandler(handler)
+
 @bot.event
 async def on_guild_join(guild):
+    logger.info(f"guild:{guild.id} - cmd:join")
     general = find(lambda x: x.name == 'general',  guild.text_channels)
     if general and general.permissions_for(guild.me).send_messages:
         await general.send('Hello {}! Users with application commands permissions can use `/m start` to gather users for matching and `/m match` to pair them up. Use `/m help` if you forget.'.format(guild.name))
@@ -42,24 +52,31 @@ async def start(ctx):
     emoji = '👋'
     await message.add_reaction(emoji)
 
+    logger.info(f"guild:{ctx.guild.id} - user:{ctx.author.id} - cmd:start")
+    
+
 @bot.command(name='match', help='Runs matching and sends messages with pairs')
 @has_permissions(use_slash_commands=True)
 async def match(ctx, match_size=2):
 
     if match_size <= 1:
         await ctx.send('The match size must be an integer greater than 1. For example "/m match 3"')
+        logger.info(f"guild:{ctx.guild.id} - user:{ctx.author.id} - cmd:match - error:matchsize")
         return
 
     last_message = await ctx.message.channel.history(limit=None).find(lambda m: (m.author.id == bot.user.id) and (m.content == 'React to this message to be matched'))
     if last_message == None:
         await ctx.send('Start message not found, please use "/m start" to gather users for matches.')
+        logger.info(f"guild:{ctx.guild.id} - user:{ctx.author.id} - cmd:match - error:nomessage")
         return
 
     match_list = []
     for reaction in last_message.reactions:
         async for user in reaction.users():
-            if user.id != bot.user.id and user.id not in match_list:
-                match_list.append(user.id)
+            # if user.id != bot.user.id and user.id not in match_list:
+            match_list.append(user.id)
+    
+    logger.info(f"guild:{ctx.guild.id} - user:{ctx.author.id} - cmd:match - matchsize:{match_size} - matched:{len(match_list)}")
     
     if len(match_list) < match_size:
         await ctx.send(f'You need at least {match_size} people to react to create a match.')
@@ -92,6 +109,7 @@ async def match(ctx, match_size=2):
         await message.channel.send("Message your match to get to know them better {}".format(emoji))
         return
     await message.channel.send("Message your matches to get to know them better {}".format(emoji))
+
 
 @bot.command(name='feedback', help='Provide feedback on Mocha Match')
 @has_permissions(use_slash_commands=True)
