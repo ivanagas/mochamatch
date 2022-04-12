@@ -10,6 +10,9 @@ https://www.loom.com/share/0c447690d10e41aaa47644e8b83bf2bb
 # top.gg link
 https://top.gg/bot/829578421893070849
 
+# Notion link
+https://www.notion.so/ianv/Discord-Matcher-Mocha-Match-f8d02b95155f43f2b720acb03f6c29e7
+
 # Permissions needed:
 - scopes: bot
 - bot permissions: Read Messages/View Channels, Send Messages, Read Message History, Add Reactions
