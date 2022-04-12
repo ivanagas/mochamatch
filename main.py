@@ -1,24 +1,18 @@
 import os
 import random
 import logging
-
-import discord
 from dotenv import load_dotenv
 
 from discord.ext import commands
 from discord.utils import find
 from discord.ext.commands import has_permissions
 
-
 load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')
-GUILD = os.getenv('DISCORD_GUILD')
 
 help_command = commands.DefaultHelpCommand(
     no_category = 'Commands'
 )
-
-bot = commands.Bot(command_prefix='/m ', help_command = help_command)
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
@@ -28,16 +22,19 @@ format = logging.Formatter('%(asctime)s - %(message)s')
 handler.setFormatter(format)
 logger.addHandler(handler)
 
+bot = commands.Bot(command_prefix='/m ', help_command = help_command)
+
+
+@bot.event
+async def on_ready():
+    print('Mocha Match running...')
+
 @bot.event
 async def on_guild_join(guild):
     logger.info(f"guild:{guild.id}({guild.name}) - cmd:join")
     general = find(lambda x: x.name == 'general',  guild.text_channels)
     if general and general.permissions_for(guild.me).send_messages:
         await general.send('Hello {}! Users with application commands permissions can use `/m start` to gather users for matching and `/m match` to pair them up. Use `/m help` if you forget.'.format(guild.name))
-
-@bot.event
-async def on_ready():
-    print('Mocha Match running...')
 
 @bot.command(name='start', help='Sends message to gather users for matching')
 @has_permissions(use_slash_commands=True)
