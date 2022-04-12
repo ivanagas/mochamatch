@@ -7,6 +7,9 @@ https://discord.com/api/oauth2/authorize?client_id=948647613652172891&permission
 # demo recording
 https://www.loom.com/share/0c447690d10e41aaa47644e8b83bf2bb
 
+# test server
+https://discord.gg/tvaUg83AKb
+
 # top.gg link
 https://top.gg/bot/829578421893070849
 
