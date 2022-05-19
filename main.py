@@ -2,7 +2,6 @@ import os
 import random
 import logging
 from dotenv import load_dotenv
-from replit import db
 
 from discord.ext import commands
 from discord.utils import find
@@ -53,28 +52,28 @@ async def start(ctx):
 async def match(ctx, match_size=2):
 
   if match_size <= 1:
-      await ctx.send('The match size must be an integer greater than 1. For example "/m match 3"')
-      logger.info(f"guild:{ctx.guild.id}({ctx.guild.name}) - user:{ctx.author.id} - cmd:match - error:matchsize")
-      return
+    await ctx.send('The match size must be an integer greater than 1. For example "/m match 3"')
+    logger.info(f"guild:{ctx.guild.id}({ctx.guild.name}) - user:{ctx.author.id} - cmd:match - error:matchsize")
+    return
 
   last_message = await ctx.message.channel.history(limit=None).find(lambda m: (m.author.id == bot.user.id) and (m.content == 'React to this message to be matched'))
   if last_message == None:
-      await ctx.send('Start message not found, please use "/m start" to gather users for matches.')
-      logger.info(f"guild:{ctx.guild.id}({ctx.guild.name}) - user:{ctx.author.id} - cmd:match - error:nomessage")
-      return
+    await ctx.send('Start message not found, please use "/m start" to gather users for matches.')
+    logger.info(f"guild:{ctx.guild.id}({ctx.guild.name}) - user:{ctx.author.id} - cmd:match - error:nomessage")
+    return
 
   match_list = []
   for reaction in last_message.reactions:
-      async for user in reaction.users():
-          # Prevent bot and duplicate users from being added to match_list
-          if user.id != bot.user.id and user.id not in match_list:
-              match_list.append(user.id)
-  
+    async for user in reaction.users():
+      # Prevent bot and duplicate users from being added to match_list
+      if user.id != bot.user.id and user.id not in match_list:
+        match_list.append(user.id)
+
   logger.info(f"guild:{ctx.guild.id}({ctx.guild.name}) - user:{ctx.author.id} - cmd:match - matchsize:{match_size} - matched:{len(match_list)}")
   
   if len(match_list) < match_size:
-      await ctx.send(f'You need at least {match_size} people to react to create a match.')
-      return
+    await ctx.send(f'You need at least {match_size} people to react to create a match.')
+    return
 
   random.shuffle(match_list)
   pairs = ([match_list[i:i + match_size] for i in range(0, len(match_list), match_size)])
@@ -111,8 +110,8 @@ async def feedback(ctx):
   if feedback:
     feedback += '\n'
     with open('feedback.txt', 'a') as f:
-        f.write(feedback)
-        f.close()
+      f.write(feedback)
+      f.close()
     await ctx.send('Your feedback has been received. Thanks!', delete_after=10)
 
 
