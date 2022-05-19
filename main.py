@@ -66,6 +66,7 @@ async def match(ctx, match_size=2):
   match_list = []
   for reaction in last_message.reactions:
       async for user in reaction.users():
+          # Prevent bot and duplicate users from being added to match_list
           if user.id != bot.user.id and user.id not in match_list:
               match_list.append(user.id)
   
@@ -76,11 +77,6 @@ async def match(ctx, match_size=2):
       return
 
   random.shuffle(match_list)
-  # This is where interests matching will go. 
-  # Check if guild users exist and if they have interests
-  # Create list of objects with id and interests
-  # See if interests match for list and if so pair them and remove from match_list
-  # Optionally, figure out how to tell them what they have in common
   pairs = ([match_list[i:i + match_size] for i in range(0, len(match_list), match_size)])
   message = await ctx.send('Here are the matches:')
   
@@ -119,49 +115,5 @@ async def feedback(ctx):
         f.close()
     await ctx.send('Your feedback has been received. Thanks!', delete_after=10)
 
-@bot.command(name='interests', help='Set your interests')
-@has_permissions(use_slash_commands=True)
-async def interests(ctx, *args):
-    
-  if not args:
-    await ctx.send('Please include at least one interest', delete_after=10)
-    return
-
-  guild_id = str(ctx.guild.id)
-  author_id = str(ctx.author.id)
-
-  # Format interests from args
-  interests = []
-  if len(args) == 1 and ',' in args[0]:
-    interests = args[0].split(',')
-  else:
-    for arg in args:
-      interests.append(arg.rstrip(','))
-
-  if guild_id in db['guilds']:
-    # If the user already exists
-    if author_id in db['guilds'][guild_id]['users']:
-      db['guilds'][guild_id]['users'][author_id]['interests'] = interests
-      await ctx.send(f'Interests for {ctx.author.name} set to {", ".join(interests)}', delete_after=10)
-      return
-    
-      # If the user doesn't exist
-    db['guilds'][guild_id]['users'][author_id] = {
-      'interests': interests
-    }
-    await ctx.send(f'Interests for {ctx.author.name} set to {", ".join(interests)}', delete_after=10)
-    return
-  
-  # If the guild doesn't exist
-  db['guilds'][guild_id] = {
-    'users': {
-      author_id: {
-        'interests': interests
-      }
-    }
-  }
-  await ctx.send(f'Interests for {ctx.author.name} set to {", ".join(interests)}', delete_after=10)
-
 
 bot.run(TOKEN)
-
