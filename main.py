@@ -2,6 +2,7 @@ import os
 import random
 import logging
 from dotenv import load_dotenv
+from replit import db
 
 from discord.ext import commands
 from discord.utils import find
@@ -22,8 +23,10 @@ format = logging.Formatter('%(asctime)s - %(message)s')
 handler.setFormatter(format)
 logger.addHandler(handler)
 
-bot = commands.Bot(command_prefix='/m ', help_command = help_command)
-
+bot = commands.Bot(command_prefix='!m ', help_command = help_command)
+# Switch to !m temporarily because /m doesn't work with multiple args
+# Discord has new slash commands features that handle anything with /
+# Discordpy hasn't implemented yet, so may need to move to disnake
 
 @bot.event
 async def on_ready():
@@ -66,8 +69,8 @@ async def match(ctx, match_size=2):
   for reaction in last_message.reactions:
     async for user in reaction.users():
       # Prevent bot and duplicate users from being added to match_list
-      if user.id != bot.user.id and user.id not in match_list:
-        match_list.append(user.id)
+      # if user.id != bot.user.id and user.id not in match_list:
+      match_list.append(user.id)
 
   logger.info(f"guild:{ctx.guild.id}({ctx.guild.name}) - user:{ctx.author.id} - cmd:match - matchsize:{match_size} - matched:{len(match_list)}")
   
@@ -76,6 +79,24 @@ async def match(ctx, match_size=2):
     return
 
   random.shuffle(match_list)
+
+  interests_list = {}
+  for user_id in match_list:
+    user_interests = db['guilds'][str(ctx.guild.id)]['users'][str(user_id)].get('interests', None)
+    print(user_interests)
+    if user_interests:
+      for interest in user_interests:
+        if interest in interests_list.keys():
+          interests_list[interest].append(user)
+          continue
+        interests_list[interest] = [user]
+  print(interests_list)
+  
+  # This is where interests matching will go. 
+  # Check if guild users exist and if they have interests
+  # Create list of objects with id and interests
+  # See if interests match for list and if so pair them and remove from match_list
+  # Optionally, figure out how to tell them what they have in common
   pairs = ([match_list[i:i + match_size] for i in range(0, len(match_list), match_size)])
   message = await ctx.send('Here are the matches:')
   
@@ -84,6 +105,7 @@ async def match(ctx, match_size=2):
       match_msg = f"<@{match[0]}>"
       for matched_user in match[1:]:
         match_msg += f" & <@{matched_user}>"
+      # This is where add to match history will go.
       await message.channel.send(match_msg)
       continue
 
@@ -102,6 +124,49 @@ async def match(ctx, match_size=2):
     await message.channel.send("Message your match to get to know them better {}".format(emoji))
     return
   await message.channel.send("Message your matches to get to know them better {}".format(emoji))
+
+@bot.command(name='interests', help='Set your interests')
+@has_permissions(use_slash_commands=True)
+async def interests(ctx, *args):
+
+  if not args:
+    await ctx.send('Please include at least one interest', delete_after=10)
+    return
+
+  guild_id = str(ctx.guild.id)
+  author_id = str(ctx.author.id)
+
+  # Format interests from args
+  interests = []
+  if len(args) == 1 and ',' in args[0]:
+    interests = args[0].split(',')
+  else:
+    for arg in args:
+      interests.append(arg.rstrip(','))
+
+  if guild_id in db['guilds']:
+    # If the user already exists
+    if author_id in db['guilds'][guild_id]['users']:
+      db['guilds'][guild_id]['users'][author_id]['interests'] = interests
+      await ctx.send(f'Interests for {ctx.author.name} set to {", ".join(interests)}', delete_after=10)
+      return
+
+    # If the user doesn't exist
+    db['guilds'][guild_id]['users'][author_id] = {
+      'interests': interests
+    }
+    await ctx.send(f'Interests for {ctx.author.name} set to {", ".join(interests)}', delete_after=10)
+    return
+
+  # If the guild doesn't exist
+  db['guilds'][guild_id] = {
+    'users': {
+      author_id: {
+        'interests': interests
+      }
+    }
+  }
+  await ctx.send(f'Interests for {ctx.author.name} set to {", ".join(interests)}', delete_after=10)
 
 @bot.command(name='feedback', help='Provide feedback on Mocha Match')
 @has_permissions(use_slash_commands=True)
