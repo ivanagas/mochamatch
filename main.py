@@ -69,8 +69,8 @@ async def match(ctx, match_size=2):
   for reaction in last_message.reactions:
     async for user in reaction.users():
       # Prevent bot and duplicate users from being added to match_list
-      # if user.id != bot.user.id and user.id not in match_list:
-      match_list.append(user.id)
+      if user.id != bot.user.id and user.id not in match_list:
+        match_list.append(user.id)
 
   logger.info(f"guild:{ctx.guild.id}({ctx.guild.name}) - user:{ctx.author.id} - cmd:match - matchsize:{match_size} - matched:{len(match_list)}")
   
