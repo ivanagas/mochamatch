@@ -2,7 +2,7 @@
 https://discord.com/api/oauth2/authorize?client_id=829578421893070849&permissions=68672&scope=bot
 
 # join link (dev):
-https://discord.com/api/oauth2/authorize?client_id=948647613652172891&permissions=68672&scope=bot
+https://discord.com/api/oauth2/authorize?client_id=948647613652172891&permissions=2147552320&scope=bot%20applications.commands
 
 # demo recording
 https://www.loom.com/share/0c447690d10e41aaa47644e8b83bf2bb
@@ -17,5 +17,8 @@ https://top.gg/bot/829578421893070849
 https://www.notion.so/ianv/Discord-Matcher-Mocha-Match-f8d02b95155f43f2b720acb03f6c29e7
 
 # Permissions needed:
-- scopes: bot
-- bot permissions: Read Messages/View Channels, Send Messages, Read Message History, Add Reactions
+- scopes: bot, application.commands
+- bot permissions: Read Messages/View Channels, Send Messages, Read Message History, Add Reactions, Use Slash Commands
+
+# discord package install
+pip install -U git+https://github.com/Rapptz/discord.py 
