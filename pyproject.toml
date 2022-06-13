@@ -6,9 +6,9 @@ authors = ["Your Name <you@example.com>"]
 
 [tool.poetry.dependencies]
 python = "^3.8"
-discord = "^1.7.3"
 python-dotenv = "^0.19.2"
 replit = "^3.2.4"
+discord = { git = "https://github.com/Rapptz/discord.py", branch = "master" }
 
 [tool.poetry.dev-dependencies]
 
