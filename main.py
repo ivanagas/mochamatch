@@ -27,7 +27,7 @@ class MochaBot(commands.Bot):
 
   async def setup_hook(self):
     await self.load_extension(f"cogs.commands")
-    await bot.tree.sync(guild = discord.Object(id = int(TEST_GUILD_ID)))
+    await bot.tree.sync()
 
   async def on_ready(self):
     print(f'{self.user} has connected to Discord!')

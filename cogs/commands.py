@@ -150,6 +150,5 @@ class MochaCommands(commands.GroupCog, name="m"):
 
 async def setup(bot: commands.Bot) -> None:
   await bot.add_cog(
-    MochaCommands(bot),
-    guilds = [discord.Object(id = int(TEST_GUILD_ID))]
+    MochaCommands(bot)
   )
