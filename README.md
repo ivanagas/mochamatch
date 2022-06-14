@@ -1,5 +1,5 @@
 # join link (live):
-https://discord.com/api/oauth2/authorize?client_id=948647613652172891&permissions=2147552320&scope=bot%20applications.commands
+https://discord.com/api/oauth2/authorize?client_id=829578421893070849&permissions=2147552320&scope=bot%20applications.commands
 
 # join link (dev):
 https://discord.com/api/oauth2/authorize?client_id=948647613652172891&permissions=2147552320&scope=bot%20applications.commands
