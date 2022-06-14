@@ -21,4 +21,4 @@ https://www.notion.so/ianv/Discord-Matcher-Mocha-Match-f8d02b95155f43f2b720acb03
 - bot permissions: Read Messages/View Channels, Send Messages, Read Message History, Add Reactions, Use Slash Commands
 
 # discord package install
-pip install -U git+https://github.com/Rapptz/discord.py 
+poetry add git+https://github.com/Rapptz/discord.py

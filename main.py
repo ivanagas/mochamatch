@@ -5,7 +5,6 @@ from discord.utils import find
 import discord
 from utils.mochalogger import getLogger
 
-
 TOKEN = os.environ['DISCORD_TOKEN']
 TEST_GUILD_ID = os.environ['TEST_GUILD_ID']
 APPLICATION_ID = os.environ['APPLICATION_ID']
@@ -27,7 +26,7 @@ class MochaBot(commands.Bot):
 
   async def setup_hook(self):
     await self.load_extension(f"cogs.commands")
-    await bot.tree.sync()
+    await bot.tree.sync(guild = discord.Object(id = int(TEST_GUILD_ID)))
 
   async def on_ready(self):
     print(f'{self.user} has connected to Discord!')

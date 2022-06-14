@@ -8,7 +8,8 @@ authors = ["Your Name <you@example.com>"]
 python = "^3.8"
 python-dotenv = "^0.19.2"
 replit = "^3.2.4"
-discord = { git = "https://github.com/Rapptz/discord.py", branch = "master" }
+discord = "^1.7.3"
+"discord.py" = {git = "https://github.com/Rapptz/discord.py"}
 
 [tool.poetry.dev-dependencies]
 
