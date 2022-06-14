@@ -1,5 +1,5 @@
 # join link (live):
-https://discord.com/api/oauth2/authorize?client_id=829578421893070849&permissions=68672&scope=bot
+https://discord.com/api/oauth2/authorize?client_id=948647613652172891&permissions=2147552320&scope=bot%20applications.commands
 
 # join link (dev):
 https://discord.com/api/oauth2/authorize?client_id=948647613652172891&permissions=2147552320&scope=bot%20applications.commands
@@ -21,4 +21,4 @@ https://www.notion.so/ianv/Discord-Matcher-Mocha-Match-f8d02b95155f43f2b720acb03
 - bot permissions: Read Messages/View Channels, Send Messages, Read Message History, Add Reactions, Use Slash Commands
 
 # discord package install
-pip install -U git+https://github.com/Rapptz/discord.py 
+poetry add git+https://github.com/Rapptz/discord.py
