@@ -2,12 +2,12 @@ import os
 from typing import Optional
 import random
 from dotenv import load_dotenv
+import logging
 
 import discord
 from discord import app_commands
 from discord.ext import commands
 
-import logging
 
 load_dotenv()
 TEST_GUILD_ID = os.getenv('TEST_GUILD_ID') or None

@@ -1,11 +1,12 @@
 import os
 from dotenv import load_dotenv
+import logging
 
 from discord.ext import commands
 from discord.utils import find
 import discord
 from utils.mochalogger import getLogger
-import logging
+
 
 load_dotenv()
 TOKEN = os.environ['DISCORD_TOKEN']
