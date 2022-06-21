@@ -1,15 +1,17 @@
 import os
 from typing import Optional
 import random
+from dotenv import load_dotenv
 
 import discord
 from discord import app_commands
 from discord.ext import commands
 
-from utils.mochalogger import getLogger
+import logging
 
-TEST_GUILD_ID = os.environ['TEST_GUILD_ID']
-log = getLogger()
+load_dotenv()
+TEST_GUILD_ID = os.getenv('TEST_GUILD_ID') or None
+log = logging.getLogger('MochaLogger')
 
 class MochaCommands(commands.GroupCog, name="m"):
   def __init__(self, bot: commands.Bot) -> None:
@@ -149,6 +151,12 @@ class MochaCommands(commands.GroupCog, name="m"):
     )
 
 async def setup(bot: commands.Bot) -> None:
-  await bot.add_cog(
-    MochaCommands(bot)
-  )
+  if TEST_GUILD_ID:
+    await bot.add_cog(
+      MochaCommands(bot),
+      guilds = [discord.Object(id = int(TEST_GUILD_ID))]
+    )
+  else:
+    await bot.add_cog(
+      MochaCommands(bot)
+    )

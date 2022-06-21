@@ -1,7 +1,7 @@
 import logging
 
 def getLogger():
-  logger = logging.getLogger(__name__)
+  logger = logging.getLogger("MochaLogger")
   logger.setLevel(logging.DEBUG)
   handler = logging.FileHandler('app.log')
   handler.setLevel(logging.DEBUG)
