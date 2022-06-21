@@ -1,4 +1,6 @@
 import os
+from dotenv import load_dotenv
+import logging
 
 from discord.ext import commands
 from discord.utils import find
@@ -6,15 +8,14 @@ import discord
 from utils.mochalogger import getLogger
 
 
+load_dotenv()
 TOKEN = os.environ['DISCORD_TOKEN']
-TEST_GUILD_ID = os.environ['TEST_GUILD_ID']
+TEST_GUILD_ID = os.getenv('TEST_GUILD_ID') or None
 APPLICATION_ID = os.environ['APPLICATION_ID']
 
 help_command = commands.DefaultHelpCommand(
     no_category = 'Commands'
 )
-
-log = getLogger()
 
 class MochaBot(commands.Bot):
 
@@ -27,12 +28,17 @@ class MochaBot(commands.Bot):
 
   async def setup_hook(self):
     await self.load_extension(f"cogs.commands")
-    await bot.tree.sync()
+    getLogger()
+    if TEST_GUILD_ID:
+      await bot.tree.sync(guild = discord.Object(id = int(TEST_GUILD_ID)))
+    else:
+      await bot.tree.sync()
 
   async def on_ready(self):
     print(f'{self.user} has connected to Discord!')
 
 bot = MochaBot()
+log = logging.getLogger('MochaLogger')
 
 @bot.event
 async def on_guild_join(guild):
