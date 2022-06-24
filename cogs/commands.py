@@ -150,6 +150,33 @@ class MochaCommands(commands.GroupCog, name="m"):
       f'Your feedback has been received. Thanks!'
     )
 
+  @app_commands.command(
+    name = "help",
+    description = "Get details about this bot"
+  )
+
+  async def help(
+    self,
+    interaction: discord.Interaction) -> None:
+
+    embed=discord.Embed(
+      title='Mocha Match Help', 
+      url='https://www.mochamatch.xyz/'
+    )
+    embed.add_field(name='/m start', value='Sends message to gather users for matching', inline=False)
+    embed.add_field(name='/m match', value='Runs matching and sends messages with pairs', inline=False)
+    embed.add_field(name='/m feedback', value='Provide feedback on Mocha Match', inline=False)
+    embed.add_field(name='/m help', value='Sends this message', inline=False)
+    embed.add_field(
+      name='Details', 
+      value='Created by [Ian Vanagas](https://ianvanagas.com/) using [discord.py 2.0](https://github.com/Rapptz/discord.py)', 
+      inline=False
+    )
+
+    await interaction.response.send_message(
+      embed=embed
+    )
+
 async def setup(bot: commands.Bot) -> None:
   if TEST_GUILD_ID:
     await bot.add_cog(
