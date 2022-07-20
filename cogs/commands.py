@@ -45,7 +45,7 @@ class MochaCommands(commands.GroupCog, name="m"):
   )
   @app_commands.describe(
     match_size = "Size of matches you want, default is 2 (pairs)",
-    leftovers = "What you want to do with extra, non-matched users, default is leaving them out"
+    leftovers = "What you want to do with leftover, non-matched users. Default is leaving them out"
   )
   @app_commands.choices(leftovers = [
     Choice(name = "Leave Out (default)", value = "out"),
