@@ -7,6 +7,7 @@ import logging
 import discord
 from discord import app_commands
 from discord.ext import commands
+from discord.app_commands import Choice
 
 
 load_dotenv()
@@ -42,11 +43,21 @@ class MochaCommands(commands.GroupCog, name="m"):
     name = "match",
     description = "Runs matching and sends messages with pairs"
   )
+  @app_commands.describe(
+    match_size = "Size of matches you want, default is 2 (pairs)",
+    leftovers = "What you want to do with leftover, non-matched users. Default is leaving them out"
+  )
+  @app_commands.choices(leftovers = [
+    Choice(name = "Leave Out (default)", value = "out"),
+    Choice(name = "Join to Last Match", value = "join"),
+    Choice(name = "Create Smaller Match", value = "smaller")
+  ])
 
   async def match(
     self,
     interaction: discord.Interaction,
-    match_size:  Optional[int] = 2) -> None:
+    match_size:  Optional[int] = 2,
+    leftovers: Optional[str] = 'out') -> None:
 
     if match_size <= 1:
       await interaction.response.send_message(
@@ -92,30 +103,36 @@ class MochaCommands(commands.GroupCog, name="m"):
     pairs = ([match_list[i:i + match_size] for i in range(0, len(match_list), match_size)])
     embed=discord.Embed(title="Here are the matches ☕")
     
-    for match in pairs:
-      if len(match) == match_size:
+    for idx, match in enumerate(pairs):
+      if len(match) == match_size or (leftovers == 'smaller' and len(match)>1):
         match_msg = f"<@{match[0]}>"
         for matched_user in match[1:]:
           match_msg += f" & <@{matched_user}>"
+
+        if leftovers == 'join' and idx == len(pairs) - 2:
+          for matched_user in pairs[-1]:
+            match_msg += f" & <@{matched_user}>"
+          
         embed.add_field(
           name='\u200b', value=match_msg, inline=False
         )
         continue
-  
-      if len(match) == 1:
+
+      if leftovers == 'out' or (leftovers == 'smaller' and len(match)==1):
+        if len(match) == 1:
+          embed.add_field(
+            name='\u200b', value=f"<@{match[0]}> is left out :(", inline=False
+          )
+          continue
+        
+        left_msg = f"<@{match[0]}>"
+        for left_user in match[1:]:
+          left_msg += f" & <@{left_user}>"
+        left_msg += " are left out :("
         embed.add_field(
-          name='\u200b', value=f"<@{match[0]}> is left out :(", inline=False
+          name='\u200b', value=f"{left_msg}", inline=False
         )
-        continue
       
-      left_msg = f"<@{match[0]}>"
-      for left_user in match:
-        left_msg += f" & <@{left_user}>"
-      left_msg += " are left out :("
-      embed.add_field(
-        name='\u200b', value=f"{left_msg}", inline=False
-      )
-    
     emoji = "😀"
     if match_size == 2:
       embed.set_footer(
