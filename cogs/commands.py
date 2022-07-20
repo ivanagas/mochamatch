@@ -102,7 +102,7 @@ class MochaCommands(commands.GroupCog, name="m"):
     random.shuffle(match_list)
     pairs = ([match_list[i:i + match_size] for i in range(0, len(match_list), match_size)])
     embed=discord.Embed(title="Here are the matches ☕")
-
+    
     for idx, match in enumerate(pairs):
       if len(match) == match_size or (leftovers == 'smaller' and len(match)>1):
         match_msg = f"<@{match[0]}>"
