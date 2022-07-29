@@ -61,7 +61,8 @@ class MochaCommands(commands.GroupCog, name="m"):
 
     if match_size <= 1:
       await interaction.response.send_message(
-        'The match size must be an integer greater than 1. For example "/m match 3"'
+        'The match size must be an integer greater than 1. For example "/m match 3"',
+        ephemeral=True
       )
       log.info(
         f"guild:{interaction.guild.id}({interaction.guild.name}) - user:{interaction.user.id} - cmd:match - error:matchsize"
@@ -79,7 +80,8 @@ class MochaCommands(commands.GroupCog, name="m"):
         break
     if last_message == None:
       await interaction.response.send_message(
-        'Start message not found, please use "/m start" to gather users for matches.'
+        'Start message not found, please use "/m start" to gather users for matches.',
+        ephemeral=True
       )
       log.info(
         f"guild:{interaction.guild.id}({interaction.guild.name}) - user:{interaction.user.id} - cmd:match - error:nomessage"
@@ -95,7 +97,8 @@ class MochaCommands(commands.GroupCog, name="m"):
     
     if len(match_list) < match_size:
       await interaction.response.send_message(
-        f'You need at least {match_size} people to react to create a match.'
+        f'You need at least {match_size} people to react to create a match.',
+        ephemeral=True
       )
       return 
 
@@ -164,7 +167,8 @@ class MochaCommands(commands.GroupCog, name="m"):
       f.write(feedback)
       f.close()
     await interaction.response.send_message(
-      f'Your feedback has been received. Thanks!'
+      f'Your feedback has been received. Thanks!',
+      ephemeral=True
     )
 
   @app_commands.command(
@@ -191,7 +195,8 @@ class MochaCommands(commands.GroupCog, name="m"):
     )
 
     await interaction.response.send_message(
-      embed=embed
+      embed=embed,
+      ephemeral=True
     )
 
 async def setup(bot: commands.Bot) -> None:
