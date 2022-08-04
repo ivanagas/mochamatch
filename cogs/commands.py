@@ -163,7 +163,7 @@ class MochaCommands(commands.GroupCog, name="m"):
     name = "feedback",
     description = "Provide feedback on Mocha Match"
   )
-  @app_commands.feedback(
+  @app_commands.describe(
     feedback = "Problems or recommendations to improve Mocha Match"
   )
 
