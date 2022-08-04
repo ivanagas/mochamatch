@@ -27,7 +27,8 @@ class MochaCommands(commands.GroupCog, name="m"):
   async def start(
     self,
     interaction: discord.Interaction) -> None:
-  
+
+    # Send match message and react as prompt
     await interaction.response.send_message(
       f'React to this message to be matched'
     )
@@ -41,11 +42,11 @@ class MochaCommands(commands.GroupCog, name="m"):
 
   @app_commands.command(
     name = "match",
-    description = "Runs matching and sends messages with pairs"
+    description = "Runs matching and sends matches"
   )
   @app_commands.describe(
-    match_size = "Size of matches you want, default is 2 (pairs)",
-    leftovers = "What you want to do with leftover, non-matched users. Default is leaving them out"
+    match_size = "Number of users per match, default is 2 (pairs)",
+    leftovers = "What to do with leftover, non-matched users. Default is leaving them out"
   )
   @app_commands.choices(leftovers = [
     Choice(name = "Leave Out (default)", value = "out"),
@@ -69,15 +70,17 @@ class MochaCommands(commands.GroupCog, name="m"):
       )
       return
 
+    # Check for start message
     message_history = interaction.channel.history(
       limit=None
     )
-
     last_message = None
     async for m in message_history:
       if (m.author.id == self.bot.user.id) and (m.content == 'React to this message to be matched'):
         last_message = m
         break
+
+    # No start message found
     if last_message == None:
       await interaction.response.send_message(
         'Start message not found, please use "/m start" to gather users for matches.',
@@ -102,18 +105,20 @@ class MochaCommands(commands.GroupCog, name="m"):
       )
       return 
 
+    # Create match groups
     random.shuffle(match_list)
-    pairs = ([match_list[i:i + match_size] for i in range(0, len(match_list), match_size)])
+    groups = ([match_list[i:i + match_size] for i in range(0, len(match_list), match_size)])
     embed=discord.Embed(title="Here are the matches ☕")
-    
-    for idx, match in enumerate(pairs):
+
+    # Format match message
+    for idx, match in enumerate(groups):
       if len(match) == match_size or (leftovers == 'smaller' and len(match)>1):
         match_msg = f"<@{match[0]}>"
         for matched_user in match[1:]:
           match_msg += f" & <@{matched_user}>"
 
-        if leftovers == 'join' and idx == len(pairs) - 2:
-          for matched_user in pairs[-1]:
+        if leftovers == 'join' and idx == len(groups) - 2:
+          for matched_user in groups[-1]:
             match_msg += f" & <@{matched_user}>"
           
         embed.add_field(
@@ -121,6 +126,7 @@ class MochaCommands(commands.GroupCog, name="m"):
         )
         continue
 
+      # Handle "leftover" users
       if leftovers == 'out' or (leftovers == 'smaller' and len(match)==1):
         if len(match) == 1:
           embed.add_field(
@@ -157,6 +163,9 @@ class MochaCommands(commands.GroupCog, name="m"):
     name = "feedback",
     description = "Provide feedback on Mocha Match"
   )
+  @app_commands.describe(
+    feedback = "Problems or recommendations to improve Mocha Match"
+  )
 
   async def feedback(
     self,
@@ -185,7 +194,7 @@ class MochaCommands(commands.GroupCog, name="m"):
       url='https://www.mochamatch.xyz/'
     )
     embed.add_field(name='/m start', value='Sends message to gather users for matching', inline=False)
-    embed.add_field(name='/m match', value='Runs matching and sends messages with pairs', inline=False)
+    embed.add_field(name='/m match', value='Runs matching and sends message with matches', inline=False)
     embed.add_field(name='/m feedback', value='Provide feedback on Mocha Match', inline=False)
     embed.add_field(name='/m help', value='Sends this message', inline=False)
     embed.add_field(
