@@ -1,24 +1,23 @@
-# join link (live):
-https://discord.com/api/oauth2/authorize?client_id=829578421893070849&permissions=2147552320&scope=bot%20applications.commands
+# Mocha Match
 
-# join link (dev):
-https://discord.com/api/oauth2/authorize?client_id=948647613652172891&permissions=2147552320&scope=bot%20applications.commands
+## Setup
+- install python 3.8.10 and poetry from https://python-poetry.org/docs/
+- run "poetry install"
+- create Create a .env and add DISCORD_TOKEN, APPLICATION_ID, and TEST_GUILD_ID
+- poetry run python main.py
 
-# demo recording
-https://www.loom.com/share/0c447690d10e41aaa47644e8b83bf2bb
+## Links
+- Main site: https://www.mochamatch.xyz/
+- Join link (live): https://discord.com/api/oauth2/authorize?client_id=829578421893070849&permissions=2147552320&scope=bot%20applications.commands
+- Join link (dev): https://discord.com/api/oauth2/authorize?client_id=948647613652172891&permissions=2147552320&scope=bot%20applications.commands
+- Demo recording: https://www.loom.com/share/0c447690d10e41aaa47644e8b83bf2bb
+- Test server: https://discord.gg/tvaUg83AKb
+- Top.gg link: https://top.gg/bot/829578421893070849
+- Notion link: https://www.notion.so/ianv/Discord-Matcher-Mocha-Match-f8d02b95155f43f2b720acb03f6c29e7
 
-# test server
-https://discord.gg/tvaUg83AKb
-
-# top.gg link
-https://top.gg/bot/829578421893070849
-
-# Notion link
-https://www.notion.so/ianv/Discord-Matcher-Mocha-Match-f8d02b95155f43f2b720acb03f6c29e7
-
-# Permissions needed:
+## Permissions Needed
 - scopes: bot, application.commands
 - bot permissions: Read Messages/View Channels, Send Messages, Read Message History, Add Reactions, Use Slash Commands
 
-# discord package install
-poetry add git+https://github.com/Rapptz/discord.py
+## Other
+To install the discord package in poetry, run "poetry add git+https://github.com/Rapptz/discord.py"
