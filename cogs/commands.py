@@ -173,7 +173,7 @@ class MochaCommands(commands.GroupCog, name="m"):
     feedback: str) -> None:
 
     with open('feedback.txt', 'a') as f:
-      f.write(feedback)
+      f.write(feedback + '\n')
       f.close()
     await interaction.response.send_message(
       f'Your feedback has been received. Thanks!',
