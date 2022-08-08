@@ -4,7 +4,11 @@
 - install python 3.8.10 and poetry from https://python-poetry.org/docs/
 - run "poetry install"
 - create Create a .env and add DISCORD_TOKEN, APPLICATION_ID, and TEST_GUILD_ID
-- poetry run python main.py
+- run "poetry run python main.py" to start
+
+## Testing
+- run "poetry run python -m pytest tests/"
+  - add "-rP" to command to see print messages
 
 ## Links
 - Main site: https://www.mochamatch.xyz/
