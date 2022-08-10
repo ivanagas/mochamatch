@@ -20,7 +20,7 @@ def base_interaction():
     def response(self):
       return TestInteractionResponse(self)
     
-    async def original_message(self):
+    async def original_response(self):
       return TestInteractionMessage(self)
   
   class TestGuild():
