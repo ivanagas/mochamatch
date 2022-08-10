@@ -32,7 +32,7 @@ class MochaCommands(commands.GroupCog, name="m"):
     await interaction.response.send_message(
       f'React to this message to be matched'
     )
-    message = await interaction.original_message()
+    message = await interaction.original_response()
     emoji = '👋'
     await message.add_reaction(emoji)
     
