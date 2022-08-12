@@ -227,7 +227,8 @@ class MochaCommands(commands.GroupCog, name="m"):
     )
   
     await interaction.response.send_message(
-      f'{role} was set as the admin role for Mocha Match.'
+      f'{role} was set as the admin role for Mocha Match.',
+      ephemeral=True
     )
 
   @app_commands.command(
