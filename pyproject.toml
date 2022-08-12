@@ -2,7 +2,7 @@
 name = "repl_python3_IvoryZealousProfiles"
 version = "0.1.0"
 description = ""
-authors = ["Your Name <you@example.com>"]
+authors = ["Ian Vanagas <ianvanagas@gmail.com>"]
 
 [tool.poetry.dependencies]
 python = "^3.8"
@@ -12,6 +12,7 @@ replit = "^3.2.4"
 discord = "^1.7.3"
 pytest = "^7.1.2"
 pytest-asyncio = "^0.19.0"
+tinydb = "^4.7.0"
 
 [tool.poetry.dev-dependencies]
 
