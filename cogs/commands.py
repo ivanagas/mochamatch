@@ -3,11 +3,17 @@ from typing import Optional
 import random
 from dotenv import load_dotenv
 import logging
+from utils.checkadminrole import check_admin_role
+from tinydb import TinyDB, Query
+from tinydb.operations import delete
 
 import discord
 from discord import app_commands
 from discord.ext import commands
 from discord.app_commands import Choice
+
+DB_LOCATION = os.getenv('DB_LOCATION')
+db = TinyDB(DB_LOCATION)
 
 
 load_dotenv()
@@ -27,6 +33,9 @@ class MochaCommands(commands.GroupCog, name="m"):
   async def start(
     self,
     interaction: discord.Interaction) -> None:
+
+    if not await check_admin_role(interaction):
+      return
 
     # Send match message and react as prompt
     await interaction.response.send_message(
@@ -59,6 +68,9 @@ class MochaCommands(commands.GroupCog, name="m"):
     interaction: discord.Interaction,
     match_size:  Optional[int] = 2,
     leftovers: Optional[str] = 'out') -> None:
+
+    if not await check_admin_role(interaction):
+      return
 
     if match_size <= 1:
       await interaction.response.send_message(
@@ -158,6 +170,65 @@ class MochaCommands(commands.GroupCog, name="m"):
     log.info(
       f"guild:{interaction.guild.id}({interaction.guild.name}) - user:{interaction.user.id} - cmd:match - matchsize:{match_size} - matched:{len(match_list)}"
     )
+  
+  @app_commands.command(
+    name = "role",
+    description = "Sets admin role for Mocha Match. Send without role to remove."
+  )
+  @app_commands.describe(
+    role="Required admin role for calling commands"
+  )
+
+  async def role(
+    self,
+    interaction: discord.Interaction,
+    role: str = None) -> None:
+
+    if not await check_admin_role(interaction):
+      return
+
+    # Remove role if none is provided
+    if not role:
+      # Check if admin_role is set
+      Guild = Query()
+      guild_rec = db.get(Guild.guild_id == interaction.guild.id)
+      if 'admin_role' not in guild_rec.keys():
+        await interaction.response.send_message(
+          f'No bot admin role set. Anyone can use the commands.',
+          ephemeral=True
+        )
+        return
+      # If admin_role is set, remove it
+      db.update(delete('admin_role'), Guild.guild_id == interaction.guild.id)
+      await interaction.response.send_message(
+        f'Bot admin role removed. Anyone can now use the commands.',
+        ephemeral=True
+      )
+      return
+  
+    # Check if role is an @mention
+    if all(c in role for c in ['<', '@', '>']):
+      role_id = int(role[3:-1])
+      role_data = discord.utils.get(interaction.guild.roles, id=role_id)
+      role = role_data.name
+  
+    # Check if role exists
+    if not discord.utils.get(interaction.guild.roles, name=role):
+      await interaction.response.send_message(
+        f'The "{role}" role does not exist, please make sure you have spelt it correctly (case sensitive).',
+        ephemeral=True
+      )
+      return
+  
+    # Set role in db
+    Guild = Query()
+    db.upsert(
+      {'guild_id': interaction.guild.id, 'admin_role': role}, Guild.guild_id == interaction.guild.id
+    )
+  
+    await interaction.response.send_message(
+      f'{role} was set as the admin role for Mocha Match.'
+    )
 
   @app_commands.command(
     name = "feedback",
@@ -195,6 +266,7 @@ class MochaCommands(commands.GroupCog, name="m"):
     )
     embed.add_field(name='/m start', value='Sends message to gather users for matching', inline=False)
     embed.add_field(name='/m match', value='Runs matching and sends message with matches', inline=False)
+    embed.add_field(name='/m role', value='Set admin role for using commands', inline=False)
     embed.add_field(name='/m feedback', value='Provide feedback on Mocha Match', inline=False)
     embed.add_field(name='/m help', value='Sends this message', inline=False)
     embed.add_field(
