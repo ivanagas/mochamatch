@@ -6,6 +6,7 @@ import logging
 from utils.checkadminrole import check_admin_role
 from tinydb import TinyDB, Query
 from tinydb.operations import delete
+import posthog
 
 import discord
 from discord import app_commands
@@ -15,10 +16,13 @@ from discord.app_commands import Choice
 DB_LOCATION = os.getenv('DB_LOCATION')
 db = TinyDB(DB_LOCATION)
 
-
 load_dotenv()
 TEST_GUILD_ID = os.getenv('TEST_GUILD_ID') or None
 log = logging.getLogger('MochaLogger')
+
+posthog.project_api_key = os.getenv('POSTHOG_API_KEY')
+posthog.host = 'https://app.posthog.com'
+
 
 class MochaCommands(commands.GroupCog, name="m"):
   def __init__(self, bot: commands.Bot) -> None:
@@ -47,6 +51,14 @@ class MochaCommands(commands.GroupCog, name="m"):
     
     log.info(
       f"guild:{interaction.guild.id}({interaction.guild.name}) - user:{interaction.user.id} - cmd:start"
+    )
+    posthog.capture(
+      str(interaction.user.id), 
+      'start',
+      {
+        'guildId': interaction.guild.id, 
+        'guildName': interaction.guild.name
+      }
     )
 
   @app_commands.command(
@@ -80,6 +92,15 @@ class MochaCommands(commands.GroupCog, name="m"):
       log.info(
         f"guild:{interaction.guild.id}({interaction.guild.name}) - user:{interaction.user.id} - cmd:match - error:matchsize"
       )
+      posthog.capture(
+        str(interaction.user.id),
+        'match',
+        {
+          'guildId': interaction.guild.id, 
+          'guildName': interaction.guild.name, 
+          'error': 'wrong match size'
+        }
+      )
       return
 
     # Check for start message
@@ -101,6 +122,15 @@ class MochaCommands(commands.GroupCog, name="m"):
       log.info(
         f"guild:{interaction.guild.id}({interaction.guild.name}) - user:{interaction.user.id} - cmd:match - error:nomessage"
       )
+      posthog.capture(
+        str(interaction.user.id),
+        'match',
+        {
+          'guildId': interaction.guild.id, 
+          'guildName': interaction.guild.name, 
+          'error': 'no start message'
+        }
+      )
       return
       
     match_list = []
@@ -114,6 +144,16 @@ class MochaCommands(commands.GroupCog, name="m"):
       await interaction.response.send_message(
         f'You need at least {match_size} people to react to create a match.',
         ephemeral=True
+      )
+      posthog.capture(
+        str(interaction.user.id),
+        'match',
+        {
+          'guildId': interaction.guild.id, 
+          'guildName': interaction.guild.name,
+          'match size': match_size,
+          'error': 'not enough users'
+        }
       )
       return 
 
@@ -170,6 +210,16 @@ class MochaCommands(commands.GroupCog, name="m"):
     log.info(
       f"guild:{interaction.guild.id}({interaction.guild.name}) - user:{interaction.user.id} - cmd:match - matchsize:{match_size} - matched:{len(match_list)}"
     )
+    posthog.capture(
+      str(interaction.user.id),
+      'match',
+      {
+        'guildId': interaction.guild.id, 
+        'guildName': interaction.guild.name, 
+        'match size': match_size, 
+        'matched': len(match_list)
+      }
+    )
   
   @app_commands.command(
     name = "role",
@@ -218,6 +268,15 @@ class MochaCommands(commands.GroupCog, name="m"):
         f'The "{role}" role does not exist, please make sure you have spelt it correctly (case sensitive).',
         ephemeral=True
       )
+      posthog.capture(
+        str(interaction.user.id),
+        'role',
+        {
+          'guildId': interaction.guild.id, 
+          'guildName': interaction.guild.name,
+          'error': 'no role exists'
+        }
+      )
       return
   
     # Set role in db
@@ -229,6 +288,14 @@ class MochaCommands(commands.GroupCog, name="m"):
     await interaction.response.send_message(
       f'{role} was set as the admin role for Mocha Match.',
       ephemeral=True
+    )
+    posthog.capture(
+      str(interaction.user.id),
+      'role',
+      {
+        'guildId': interaction.guild.id, 
+        'guildName': interaction.guild.name
+      }
     )
 
   @app_commands.command(
@@ -250,6 +317,14 @@ class MochaCommands(commands.GroupCog, name="m"):
     await interaction.response.send_message(
       f'Your feedback has been received. Thanks!',
       ephemeral=True
+    )
+    posthog.capture(
+      str(interaction.user.id),
+      'feedback',
+      {
+        'guildId': interaction.guild.id, 
+        'guildName': interaction.guild.name
+      }
     )
 
   @app_commands.command(
@@ -279,6 +354,14 @@ class MochaCommands(commands.GroupCog, name="m"):
     await interaction.response.send_message(
       embed=embed,
       ephemeral=True
+    )
+    posthog.capture(
+      str(interaction.user.id),
+      'help',
+      {
+        'guildId': interaction.guild.id, 
+        'guildName': interaction.guild.name
+      }
     )
 
 async def setup(bot: commands.Bot) -> None:

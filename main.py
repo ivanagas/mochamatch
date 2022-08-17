@@ -1,17 +1,20 @@
 import os
 from dotenv import load_dotenv
 import logging
+import posthog
 
 from discord.ext import commands
 from discord.utils import find
 import discord
 from utils.mochalogger import getLogger
 
-
 load_dotenv()
 TOKEN = os.environ['DISCORD_TOKEN']
 TEST_GUILD_ID = os.getenv('TEST_GUILD_ID') or None
 APPLICATION_ID = os.environ['APPLICATION_ID']
+
+posthog.project_api_key = os.getenv('POSTHOG_API_KEY')
+posthog.host = 'https://app.posthog.com'
 
 help_command = commands.DefaultHelpCommand(
     no_category = 'Commands'
@@ -43,10 +46,15 @@ log = logging.getLogger('MochaLogger')
 @bot.event
 async def on_guild_join(guild):
   log.info(f"guild:{guild.id}({guild.name}) - cmd:join")
+  posthog.capture(
+    guild.id, 
+    'join',
+    {'guildId': guild.id, 'guildName': guild.name}
+  )
   general = find(lambda x: x.name == 'general',  guild.text_channels)
   if general and general.permissions_for(guild.me).send_messages:
     await general.send(
-      f'Hello {guild.name}! Use `/m start` to gather users for matching and `/m match` to pair them up.'
+      f'Hello {guild.name}! Use `/m start` to gather users for matching and `/m match` to match them up.'
     )
 
 def run():
