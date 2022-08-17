@@ -4,7 +4,7 @@
 - install python 3.8.10 and poetry from https://python-poetry.org/docs/
 - run "poetry install"
 - create a top-level folder named data and add a file "testdb.json"
-- create a .env file and add DISCORD_TOKEN, APPLICATION_ID, TEST_GUILD_ID, and DB_LOCATION (i.e. data/testdb.json)
+- create a .env file and add DISCORD_TOKEN, APPLICATION_ID, TEST_GUILD_ID, POSTHOG_API_KEY, and DB_LOCATION (i.e. data/testdb.json)
 - run "poetry run python main.py" to start
 
 ## Testing
