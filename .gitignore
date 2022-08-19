@@ -11,5 +11,3 @@ venv/
 poetry.lock
 start.bat
 test.bat
-
-data/
