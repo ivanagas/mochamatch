@@ -2,6 +2,7 @@ import os
 from dotenv import load_dotenv
 import logging
 import posthog
+from quart import Quart
 
 from discord.ext import commands
 from discord.utils import find
@@ -30,6 +31,7 @@ class MochaBot(commands.Bot):
     )
 
   async def setup_hook(self):
+    bot.loop.create_task(app.run_task('0.0.0.0'))
     await self.load_extension(f"cogs.commands")
     getLogger()
     if TEST_GUILD_ID:
@@ -42,6 +44,11 @@ class MochaBot(commands.Bot):
 
 bot = MochaBot()
 log = logging.getLogger('MochaLogger')
+app = Quart(__name__)
+
+@app.route("/")
+async def home():
+  return 'hi'
 
 @bot.event
 async def on_guild_join(guild):
