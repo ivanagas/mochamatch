@@ -1,13 +1,11 @@
 import os
 from dotenv import load_dotenv
-import logging
 import posthog
 from quart import Quart
 
 from discord.ext import commands
 from discord.utils import find
 import discord
-from utils.mochalogger import getLogger
 
 load_dotenv()
 TOKEN = os.environ['DISCORD_TOKEN']
@@ -33,7 +31,6 @@ class MochaBot(commands.Bot):
   async def setup_hook(self):
     bot.loop.create_task(app.run_task('0.0.0.0'))
     await self.load_extension(f"cogs.commands")
-    getLogger()
     if TEST_GUILD_ID:
       await bot.tree.sync(guild = discord.Object(id = int(TEST_GUILD_ID)))
     else:
@@ -43,7 +40,6 @@ class MochaBot(commands.Bot):
     print(f'{self.user} has connected to Discord!')
 
 bot = MochaBot()
-log = logging.getLogger('MochaLogger')
 app = Quart(__name__)
 
 @app.route("/")
@@ -52,7 +48,6 @@ async def home():
 
 @bot.event
 async def on_guild_join(guild):
-  log.info(f"guild:{guild.id}({guild.name}) - cmd:join")
   posthog.capture(
     guild.id, 
     'join',

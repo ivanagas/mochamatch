@@ -2,7 +2,6 @@ import os
 from typing import Optional
 import random
 from dotenv import load_dotenv
-import logging
 from utils.checkadminrole import check_admin_role
 from tinydb import TinyDB, Query
 from tinydb.operations import delete
@@ -18,7 +17,6 @@ db = TinyDB(DB_LOCATION)
 
 load_dotenv()
 TEST_GUILD_ID = os.getenv('TEST_GUILD_ID') or None
-log = logging.getLogger('MochaLogger')
 
 posthog.project_api_key = os.getenv('POSTHOG_API_KEY')
 posthog.host = 'https://app.posthog.com'
@@ -49,9 +47,6 @@ class MochaCommands(commands.GroupCog, name="m"):
     emoji = '👋'
     await message.add_reaction(emoji)
     
-    log.info(
-      f"guild:{interaction.guild.id}({interaction.guild.name}) - user:{interaction.user.id} - cmd:start"
-    )
     posthog.capture(
       str(interaction.user.id), 
       'start',
@@ -89,9 +84,6 @@ class MochaCommands(commands.GroupCog, name="m"):
         'The match size must be an integer greater than 1. For example "/m match 3"',
         ephemeral=True
       )
-      log.info(
-        f"guild:{interaction.guild.id}({interaction.guild.name}) - user:{interaction.user.id} - cmd:match - error:matchsize"
-      )
       posthog.capture(
         str(interaction.user.id),
         'match',
@@ -118,9 +110,6 @@ class MochaCommands(commands.GroupCog, name="m"):
       await interaction.response.send_message(
         'Start message not found, please use "/m start" to gather users for matches.',
         ephemeral=True
-      )
-      log.info(
-        f"guild:{interaction.guild.id}({interaction.guild.name}) - user:{interaction.user.id} - cmd:match - error:nomessage"
       )
       posthog.capture(
         str(interaction.user.id),
@@ -206,9 +195,6 @@ class MochaCommands(commands.GroupCog, name="m"):
       
     await interaction.response.send_message(
       embed=embed
-    )
-    log.info(
-      f"guild:{interaction.guild.id}({interaction.guild.name}) - user:{interaction.user.id} - cmd:match - matchsize:{match_size} - matched:{len(match_list)}"
     )
     posthog.capture(
       str(interaction.user.id),
