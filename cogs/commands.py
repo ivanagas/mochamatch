@@ -297,20 +297,19 @@ class MochaCommands(commands.GroupCog, name="m"):
     interaction: discord.Interaction,
     feedback: str) -> None:
 
-    with open('feedback.txt', 'a') as f:
-      f.write(feedback + '\n')
-      f.close()
-    await interaction.response.send_message(
-      f'Your feedback has been received. Thanks!',
-      ephemeral=True
-    )
     posthog.capture(
       str(interaction.user.id),
       'feedback',
       {
         'guildId': interaction.guild.id, 
-        'guildName': interaction.guild.name
+        'guildName': interaction.guild.name,
+        'feedback': feedback
       }
+    )
+
+    await interaction.response.send_message(
+      f'Your feedback has been received. Thanks!',
+      ephemeral=True
     )
 
   @app_commands.command(
