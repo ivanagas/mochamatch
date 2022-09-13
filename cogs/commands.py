@@ -183,15 +183,21 @@ class MochaCommands(commands.GroupCog, name="m"):
           name='\u200b', value=f"{left_msg}", inline=False
         )
       
-    emoji = "😀"
+    # Set footer to a random option
+    footer_options = [
+      'Mocha Match needs your feedback. Use "/m feedback" to tell us what we can improve.',
+      'Mocha Match is created by Ian Vanagas, check out more of my work at ianvanagas.com.',
+      'Mocha Match creates connections that build stronger communities and a better internet.'
+    ]
+
     if match_size == 2:
-      embed.set_footer(
-        text=f"Message your match to get to know them better {emoji}"
-      )
+      footer_options.append('Message your match to get to know them better 😀')
     else:
-      embed.set_footer(
-        text=f"Message your matches to get to know them better {emoji}"
-      )
+      footer_options.append('Message your matches to get to know them better 😀')
+
+    embed.set_footer(
+      text=random.choice(footer_options)
+    )
       
     await interaction.response.send_message(
       embed=embed
