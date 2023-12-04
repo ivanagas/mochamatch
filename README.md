@@ -1,3 +1,5 @@
+> Mocha Match has been shutdown due to inactivity, feel free to borrow the code for your own use. 
+
 # Mocha Match
 
 ## Setup
